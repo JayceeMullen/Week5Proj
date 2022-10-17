@@ -3,31 +3,42 @@
 namespace Week5Proj;
 
 public class Dungeon
-{ 
-    private string _title;
-    private List<Room> _rooms;
-    private List<Monster> _monsters;
-
+{
+    private readonly List<Room> _rooms;
+    private readonly List<Character> _monsters;
+    
+    public string Title { get; }
     public Dungeon(string title, int numberOfRooms, int numberOfMonsters)
     {
-        _title = title;
+        Title = title;
         _rooms = GetRooms(numberOfRooms) as List<Room> ?? throw new InvalidOperationException();
-        _monsters = GetMonsters(numberOfMonsters) as List<Monster> ?? throw new InvalidOperationException();
+        _monsters = GetMonsters(numberOfMonsters) as List<Character> ?? throw new InvalidOperationException();
     }
 
     public static Actions ShowMenu()
     {
-        Console.WriteLine("Show Menu");
-        return Actions.Exit;
+        Console.WriteLine("What do you want to do? \n[Attack], [Run] Away, Player [Info], Look at [Monster], [Exit]");
+        string str = Console.ReadLine() ?? string.Empty;
+        str = str.ToLower().Trim();
+        return str switch
+        {
+            "run" => Actions.RunAway,
+            "attack" => Actions.Attack,
+            "info" => Actions.PlayerInfo,
+            "monster" => Actions.MonsterInfo,
+            "exit" => Actions.Exit,
+            _ => Actions.Invalid
+        };
     }
 
-    private static IEnumerable<Monster> GetMonsters(int numberOfMonsters)
+    private static IEnumerable<Character> GetMonsters(int numberOfMonsters)
     {
-        var monsters = new List<Monster>();
+        var monsters = new List<Character>();
         for (var i = 0; i < numberOfMonsters; i++)
         {
-            monsters.Add(new Monster(i.ToString()));
+            monsters.Add(new Character($"Monster {i}", WeaponsHelper.GetWeapon()));
         }
+        
 
         return monsters;
     }
@@ -43,5 +54,22 @@ public class Dungeon
         }
 
         return rooms;
+    }
+
+    public Character GetMonster()
+    {
+        var rand = new Random();
+        return _monsters[rand.Next(_monsters.Count)];
+    }
+
+    public Room GetRoom()
+    {
+        var rand = new Random();
+        return _rooms[rand.Next(_rooms.Count)];
+    }
+
+    public void Run(Character playerCharacter)
+    {
+        throw new NotImplementedException();
     }
 }

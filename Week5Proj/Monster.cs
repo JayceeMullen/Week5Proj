@@ -1,8 +1,10 @@
 ﻿namespace Week5Proj;
 
-internal class Monster
+public class Monster
 {
-    private string _name;
+    private readonly string _name;
+    private int _toHit;
+    private int _hp;
     public string name
     {
         get { return _name; }

@@ -7,8 +7,20 @@ namespace Week5Proj;
 public static class WeaponsHelper
 {
     private const string Dnd5Eapi = "https://www.dnd5eapi.co/api/";
+    private static readonly List<Weapon> WeaponsList;
 
-    public static IEnumerable<Weapon> GetWeapons()
+    static WeaponsHelper()
+    {
+        WeaponsList = GetWeapons() as List<Weapon> ?? throw new InvalidOperationException();
+    }
+
+    public static Weapon GetWeapon()
+    {
+        var rand = new Random();
+        return WeaponsList[rand.Next(WeaponsList.Count)];
+    }
+
+    private static IEnumerable<Weapon> GetWeapons()
     {
         return !File.Exists("weapons.csv") ? GetWeaponsFromApi() : GetWeaponsFromCsv();
     }
@@ -74,6 +86,7 @@ public static class WeaponsHelper
                 weapon.MaxDamage = Convert.ToInt32(new string(dice[^1], 1));
 
                 var properties = new JArray(data.properties);
+                //TODO: Extract two-handed property from array and set in object
             }
             catch
             {

@@ -3,8 +3,11 @@
 public enum Actions
 {
     Attack,
+    Block,
     RunAway,
     PlayerInfo,
     MonsterInfo,
-    Exit
+    Exit,
+    DoNothing,
+    Invalid
 }

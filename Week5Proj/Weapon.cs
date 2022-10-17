@@ -8,19 +8,11 @@ public class Weapon
      public bool IsTwoHanded;
      public int BonusToHit;
 
-     public Weapon(string name, int minDamage, int maxDamage, bool isTwoHanded, int bonusToHit)
-     {
-          Name = name;
-          MinDamage = minDamage;
-          IsTwoHanded = isTwoHanded;
-          BonusToHit = bonusToHit;
-          MaxDamage = maxDamage;
-     }
-
      public Weapon(string name)
      {
+          var rand = new Random();
           Name = name;
-          MinDamage = 1;
+          BonusToHit = rand.Next(1, 5);
      }
 
      public override string ToString()
