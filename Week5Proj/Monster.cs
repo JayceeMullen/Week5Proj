@@ -1,5 +1,6 @@
-﻿namespace Week5Proj;
+﻿
 
+/*
 public class Monster
 {
     private readonly string _name;
@@ -14,4 +15,4 @@ public class Monster
     {
         _name = name;
     }
-}
+}*/

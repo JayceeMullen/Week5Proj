@@ -2,15 +2,10 @@
 
 public class Room
 {
-    private readonly string _description;
-    
-    public string Description
-    {
-        get { return _description; }
-    }
+    public string Description { get; }
 
     public Room(string description)
     {
-        _description = description;
+        Description = description;
     }
 }

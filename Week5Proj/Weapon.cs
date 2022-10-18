@@ -6,13 +6,12 @@ public class Weapon
      public int MinDamage;
      public int MaxDamage;
      public bool IsTwoHanded;
-     public int BonusToHit;
+     public readonly int MagicBonus;
 
      public Weapon(string name)
      {
-          var rand = new Random();
           Name = name;
-          BonusToHit = rand.Next(1, 5);
+          MagicBonus = 0;
      }
 
      public override string ToString()

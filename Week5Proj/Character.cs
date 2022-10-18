@@ -5,11 +5,11 @@ namespace Week5Proj;
 public class Character
 {
     private readonly Random _rand = new();
-    private readonly string _name;
-    private Weapon _equippedWpn;
+    private readonly string _name = null!;
+    private readonly Weapon _equippedWpn = null!;
     private int HitPoints { get; set; }
-    private bool CanBlock => !_equippedWpn.IsTwoHanded;
     
+    public bool CanBlock => !_equippedWpn.IsTwoHanded;
     public bool IsDead => HitPoints <= 0;
 
     protected Character()
@@ -34,7 +34,7 @@ public class Character
 
     public int Attack()
     {
-        int damage = _rand.Next(_equippedWpn.MinDamage, _equippedWpn.MaxDamage + 1);
+        int damage = _rand.Next(_equippedWpn.MinDamage, _equippedWpn.MaxDamage + 1) + _equippedWpn.MagicBonus;
         Console.WriteLine($"{_name} swings their {_equippedWpn.Name} and " +
                           $"deals {damage} damage!");
         return damage;
@@ -43,7 +43,7 @@ public class Character
     public void Info()
     {
         Console.WriteLine($"{_name} has {HitPoints} hit points and is wielding a {_equippedWpn.Name} " +
-                          $"at +{_equippedWpn.BonusToHit} to hit");
+                          $"at +{_equippedWpn.MagicBonus} to hit");
     }
 
     public void RunAway()

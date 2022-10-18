@@ -1,4 +1,6 @@
 ﻿using System.Net.Http.Headers;
+using System.Reflection;
+using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -99,6 +101,39 @@ public static class WeaponsHelper
             retList.Remove(weapon);
         }
 
+        ExportCsv(retList, "weapons");
+
         return retList;
+    }
+
+    private static void ExportCsv<T>(List<T> genericList, string fileName)
+    {
+        var sb = new StringBuilder();
+        string basePath = AppDomain.CurrentDomain.BaseDirectory;
+        string finalPath = Path.Combine(basePath, fileName+".csv");
+        var header = "";
+        PropertyInfo[] info = typeof(T).GetProperties();
+        if (!File.Exists(finalPath))
+        {
+            FileStream file = File.Create(finalPath);
+            file.Close();
+            header = typeof(T).GetProperties().Aggregate(header, (current, prop) => current + prop.Name + "; ");
+            header = header[..^2];
+            sb.AppendLine(header);
+            TextWriter sw = new StreamWriter(finalPath, true);
+            sw.Write(sb.ToString());
+            sw.Close();
+        }
+
+        foreach (T obj in genericList)
+        {
+            sb = new StringBuilder();
+            string line = info.Aggregate("", (current, prop) => current + (prop.GetValue(obj, null) + "; "));
+            line = line[..^2];
+            sb.AppendLine(line);
+            TextWriter sw = new StreamWriter(finalPath, true);
+            sw.Write(sb.ToString());
+            sw.Close(); 
+        }
     }
 }

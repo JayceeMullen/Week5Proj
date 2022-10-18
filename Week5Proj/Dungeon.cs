@@ -39,7 +39,6 @@ public class Dungeon
             monsters.Add(new Character($"Monster {i}", WeaponsHelper.GetWeapon()));
         }
         
-
         return monsters;
     }
 
