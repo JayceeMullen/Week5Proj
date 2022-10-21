@@ -29,7 +29,29 @@ public static class WeaponsHelper
 
     private static List<Weapon> GetWeaponsFromCsv()
     {
-        throw new NotImplementedException();
+        string basePath = AppDomain.CurrentDomain.BaseDirectory;
+        string finalPath = Path.Combine(basePath, "weapons.csv");
+        var retList = new List<Weapon>();
+        
+        var reader = new StreamReader(File.OpenRead(finalPath));
+        _ = reader.ReadLine(); // Discard first line with headers.
+        while (!reader.EndOfStream)
+        {
+            string? line = reader.ReadLine();
+            if (line == null) continue;
+            string[] values = line.Split(';');
+            var wep = new Weapon
+            {
+                Name = values[0],
+                MinDamage = int.Parse(values[1]),
+                MaxDamage = int.Parse(values[2]),
+                IsTwoHanded = bool.Parse(values[3]),
+                MagicBonus = int.Parse(values[4])
+            };
+            retList.Add(wep);
+        }
+
+        return retList;
     }
 
     private static List<Weapon> GetWeaponsFromApi()
@@ -54,7 +76,7 @@ public static class WeaponsHelper
             string name = item.name;
             retList.Add(new Weapon(name));
         }
-        
+
         response = client.GetAsync("equipment-categories/simple-weapons").Result;
         data = null;
         if (response.IsSuccessStatusCode)
@@ -85,10 +107,16 @@ public static class WeaponsHelper
                 if (data == null) throw new NullReferenceException($"API Call returned null. Index: {index}");
                 string dice = data.damage.damage_dice;
                 weapon.MinDamage = Convert.ToInt32(new string(dice[0], 1));
-                weapon.MaxDamage = Convert.ToInt32(new string(dice[^1], 1));
+                weapon.MaxDamage = dice[^1] == '0' ? 10 : Convert.ToInt32(new string(dice[^1], 1));
 
                 var properties = new JArray(data.properties);
-                //TODO: Extract two-handed property from array and set in object
+                foreach (JToken item in properties)
+                {
+                    if (item["index"]?.ToString() == "two-handed")
+                    {
+                        weapon.IsTwoHanded = true;
+                    }
+                }
             }
             catch
             {
@@ -106,13 +134,14 @@ public static class WeaponsHelper
         return retList;
     }
 
-    private static void ExportCsv<T>(List<T> genericList, string fileName)
+    private static void ExportCsv<T>(List<T> genericList, string fileName) //Exported CSV is ; delimited
     {
         var sb = new StringBuilder();
         string basePath = AppDomain.CurrentDomain.BaseDirectory;
-        string finalPath = Path.Combine(basePath, fileName+".csv");
+        string finalPath = Path.Combine(basePath, fileName + ".csv");
         var header = "";
         PropertyInfo[] info = typeof(T).GetProperties();
+
         if (!File.Exists(finalPath))
         {
             FileStream file = File.Create(finalPath);
@@ -133,7 +162,7 @@ public static class WeaponsHelper
             sb.AppendLine(line);
             TextWriter sw = new StreamWriter(finalPath, true);
             sw.Write(sb.ToString());
-            sw.Close(); 
+            sw.Close();
         }
     }
 }

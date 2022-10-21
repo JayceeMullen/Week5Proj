@@ -1,6 +1,4 @@
-﻿
-
-/*
+﻿/*
 public class Monster
 {
     private readonly string _name;

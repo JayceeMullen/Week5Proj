@@ -2,16 +2,20 @@
 
 public class Weapon
 {
-     public readonly string Name;
-     public int MinDamage;
-     public int MaxDamage;
-     public bool IsTwoHanded;
-     public readonly int MagicBonus;
+     public string Name { get; init; } = null!;
+     public int MinDamage { get; set; }
+     public int MaxDamage { get; set; }
+     public bool IsTwoHanded { get; set; }
+     public int MagicBonus { get; init; }
 
      public Weapon(string name)
      {
           Name = name;
           MagicBonus = 0;
+     }
+
+     public Weapon()
+     {
      }
 
      public override string ToString()

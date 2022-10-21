@@ -46,14 +46,9 @@ public class Character
                           $"at +{_equippedWpn.MagicBonus} to hit");
     }
 
-    public void RunAway()
-    {
-        throw new NotImplementedException();
-    }
-
     public void TakeDamage(int damage)
     {
         HitPoints -= damage;
-        Console.WriteLine($"{_name} has {HitPoints} remaining.");
+        Console.WriteLine($"{_name} has {HitPoints} HP remaining.");
     }
 }

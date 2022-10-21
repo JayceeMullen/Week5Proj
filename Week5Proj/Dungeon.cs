@@ -4,15 +4,15 @@ namespace Week5Proj;
 
 public class Dungeon
 {
-    private readonly List<Room> _rooms;
-    private readonly List<Character> _monsters;
+    private readonly Room[] _rooms;
+    private readonly Character[] _monsters;
     
     public string Title { get; }
     public Dungeon(string title, int numberOfRooms, int numberOfMonsters)
     {
         Title = title;
-        _rooms = GetRooms(numberOfRooms) as List<Room> ?? throw new InvalidOperationException();
-        _monsters = GetMonsters(numberOfMonsters) as List<Character> ?? throw new InvalidOperationException();
+        _rooms = GetRooms(numberOfRooms) as Room[] ?? throw new InvalidOperationException();
+        _monsters = GetMonsters(numberOfMonsters) as Character[] ?? throw new InvalidOperationException();
     }
 
     public static Actions ShowMenu()
@@ -39,7 +39,7 @@ public class Dungeon
             monsters.Add(new Character($"Monster {i}", WeaponsHelper.GetWeapon()));
         }
         
-        return monsters;
+        return monsters.ToArray();
     }
 
     private static IEnumerable<Room> GetRooms(int numberOfRooms)
@@ -52,23 +52,18 @@ public class Dungeon
             rooms.Add(new Room(faker.Lorem.Sentence()));
         }
 
-        return rooms;
+        return rooms.ToArray();
     }
 
     public Character GetMonster()
     {
         var rand = new Random();
-        return _monsters[rand.Next(_monsters.Count)];
+        return _monsters[rand.Next(_monsters.Length)];
     }
 
     public Room GetRoom()
     {
         var rand = new Random();
-        return _rooms[rand.Next(_rooms.Count)];
-    }
-
-    public void Run(Character playerCharacter)
-    {
-        throw new NotImplementedException();
+        return _rooms[rand.Next(_rooms.Length)];
     }
 }

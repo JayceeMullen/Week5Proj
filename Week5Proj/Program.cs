@@ -22,6 +22,12 @@ public static class Program
         Actions action;
         do
         { 
+            if (playerCharacter.IsDead)
+            {
+                Console.WriteLine("You are dead. Game over!");
+                break;
+            }
+            
             if (currentMonster.IsDead)
             {
                 Console.WriteLine("Victory! Moving to the next room...");
@@ -30,17 +36,12 @@ public static class Program
                 Console.WriteLine(currentRoom.Description);
                 currentMonster.Info();
             }
-
-            if (playerCharacter.IsDead)
-            {
-                Console.WriteLine("You are dead. Game over!");
-                break;
-            }
+            
             action = Dungeon.ShowMenu();
             switch (action)
             {
                 case Actions.Invalid:
-                    Console.WriteLine("That is an invalid action.");
+                    Console.WriteLine("I don't know what you mean.");
                     continue;
                 case Actions.Attack:
                     currentMonster.TakeDamage(playerCharacter.Attack());
@@ -52,8 +53,23 @@ public static class Program
                     currentMonster.Info();
                     break;
                 case Actions.RunAway:
-                    playerCharacter.RunAway();
+                    Console.WriteLine("Run away!");
+                    currentMonster = dungeon.GetMonster();
+                    currentRoom = dungeon.GetRoom();
+                    Console.WriteLine(currentRoom.Description);
+                    currentMonster.Info();
                     break;
+                case Actions.Block:
+                    Console.WriteLine(playerCharacter.CanBlock
+                        ? "You prepare to block the next attack!"
+                        : "You cannot block!");
+                    break;
+                case Actions.Exit:
+                    break;
+                case Actions.DoNothing:
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         } while (action != Actions.Exit);
     }
