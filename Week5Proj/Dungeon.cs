@@ -11,8 +11,8 @@ public class Dungeon
     public Dungeon(string title, int numberOfRooms, int numberOfMonsters)
     {
         Title = title;
-        _rooms = GetRooms(numberOfRooms) as Room[] ?? throw new InvalidOperationException();
-        _monsters = GetMonsters(numberOfMonsters) as Character[] ?? throw new InvalidOperationException();
+        _rooms = GetRooms(numberOfRooms).ToArray() ?? throw new InvalidOperationException();
+        _monsters = GetMonsters(numberOfMonsters).ToArray() ?? throw new InvalidOperationException();
     }
 
     public static Actions ShowMenu()
@@ -39,7 +39,7 @@ public class Dungeon
             monsters.Add(new Character($"Monster {i}", WeaponsHelper.GetWeapon()));
         }
         
-        return monsters.ToArray();
+        return monsters;
     }
 
     private static IEnumerable<Room> GetRooms(int numberOfRooms)
@@ -52,7 +52,7 @@ public class Dungeon
             rooms.Add(new Room(faker.Lorem.Sentence()));
         }
 
-        return rooms.ToArray();
+        return rooms;
     }
 
     public Character GetMonster()

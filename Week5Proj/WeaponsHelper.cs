@@ -13,7 +13,7 @@ public static class WeaponsHelper
 
     static WeaponsHelper()
     {
-        WeaponsList = GetWeapons() as List<Weapon> ?? throw new InvalidOperationException();
+        WeaponsList = GetWeapons().ToList() ?? throw new InvalidOperationException();
     }
 
     public static Weapon GetWeapon()
@@ -27,7 +27,7 @@ public static class WeaponsHelper
         return !File.Exists("weapons.csv") ? GetWeaponsFromApi() : GetWeaponsFromCsv();
     }
 
-    private static List<Weapon> GetWeaponsFromCsv()
+    private static IEnumerable<Weapon> GetWeaponsFromCsv()
     {
         string basePath = AppDomain.CurrentDomain.BaseDirectory;
         string finalPath = Path.Combine(basePath, "weapons.csv");
@@ -54,7 +54,7 @@ public static class WeaponsHelper
         return retList;
     }
 
-    private static List<Weapon> GetWeaponsFromApi()
+    private static IEnumerable<Weapon> GetWeaponsFromApi()
     {
         using var client = new HttpClient();
         client.BaseAddress = new Uri(Dnd5Eapi);
@@ -141,18 +141,15 @@ public static class WeaponsHelper
         string finalPath = Path.Combine(basePath, fileName + ".csv");
         var header = "";
         PropertyInfo[] info = typeof(T).GetProperties();
-
-        if (!File.Exists(finalPath))
-        {
-            FileStream file = File.Create(finalPath);
-            file.Close();
-            header = typeof(T).GetProperties().Aggregate(header, (current, prop) => current + prop.Name + "; ");
-            header = header[..^2];
-            sb.AppendLine(header);
-            TextWriter sw = new StreamWriter(finalPath, true);
-            sw.Write(sb.ToString());
-            sw.Close();
-        }
+        
+        FileStream file = File.Create(finalPath);
+        file.Close();
+        header = typeof(T).GetProperties().Aggregate(header, (current, prop) => current + prop.Name + "; ");
+        header = header[..^2];
+        sb.AppendLine(header);
+        TextWriter sw1 = new StreamWriter(finalPath, true);
+        sw1.Write(sb.ToString());
+        sw1.Close();
 
         foreach (T obj in genericList)
         {
@@ -160,9 +157,9 @@ public static class WeaponsHelper
             string line = info.Aggregate("", (current, prop) => current + (prop.GetValue(obj, null) + "; "));
             line = line[..^2];
             sb.AppendLine(line);
-            TextWriter sw = new StreamWriter(finalPath, true);
-            sw.Write(sb.ToString());
-            sw.Close();
+            TextWriter sw2 = new StreamWriter(finalPath, true);
+            sw2.Write(sb.ToString());
+            sw2.Close();
         }
     }
 }
