@@ -6,11 +6,18 @@ public static class Program
 {
     public static void Main()
     {
+        Console.WriteLine("What is your name?:");
+        string? pcName = Console.ReadLine();
+        Console.WriteLine("Do you wish to carry a shield into the dungeon? You will not be able to find another... Y/N");
+        string? selection = Console.ReadLine();
+        bool wantsShield = selection != null && selection.ToLower() == "y";
+
         //Set Randomizer and variables for Bogus
         Randomizer.Seed = new Random(0451);
 
         var dungeon = new Dungeon("Test Title", 10, 10);
-        var playerCharacter = new Character(WeaponsHelper.GetWeapon());
+        var playerCharacter = new Hero(pcName ?? "Hero", WeaponsHelper.GetWeapon(), wantsShield);
+        var monstersKilled = 0;
         
         playerCharacter.Info();
         Character currentMonster = dungeon.GetMonster();
@@ -30,7 +37,19 @@ public static class Program
             
             if (currentMonster.IsDead)
             {
-                Console.WriteLine("Victory! Moving to the next room...");
+                monstersKilled++;
+                if (monstersKilled % 2 == 0)
+                {
+                    playerCharacter.LevelUp();
+                }
+                Weapon loot = Dungeon.DropLoot(monstersKilled);
+                Console.WriteLine($"Victory! {currentMonster.Name} drops a {loot.Name}! \nDo you wish to equip this? Y/N"); 
+                selection = Console.ReadLine();
+                if (selection != null && selection.ToLower() == "y")
+                {
+                    playerCharacter.EquipWeapon(loot);
+                }
+                Console.WriteLine("Moving to the next room...");
                 currentMonster = dungeon.GetMonster();
                 currentRoom = dungeon.GetRoom();
                 Console.WriteLine(currentRoom.Description);
@@ -45,6 +64,7 @@ public static class Program
                     continue;
                 case Actions.Attack:
                     currentMonster.TakeDamage(playerCharacter.Attack());
+                    playerCharacter.TakeDamage(currentMonster.Attack());
                     break;
                 case Actions.PlayerInfo:
                     playerCharacter.Info();
@@ -60,9 +80,19 @@ public static class Program
                     currentMonster.Info();
                     break;
                 case Actions.Block:
-                    Console.WriteLine(playerCharacter.CanBlock
-                        ? "You prepare to block the next attack!"
-                        : "You cannot block!");
+                    if (!playerCharacter.IsBlocking)
+                    {
+                        Console.WriteLine(playerCharacter.CanBlock
+                            ? "You prepare to block the next attack! Blocking halves the damage you take and receive!"
+                            : "You cannot block!");
+                        playerCharacter.IsBlocking = true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("You lower your guard, taking and dealing normal damage.");
+                        playerCharacter.IsBlocking = false;
+                    }
+
                     break;
                 case Actions.Exit:
                     break;

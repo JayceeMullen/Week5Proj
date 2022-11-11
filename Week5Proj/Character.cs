@@ -1,54 +1,57 @@
-﻿using Bogus;
-
-namespace Week5Proj;
+﻿namespace Week5Proj;
 
 public class Character
 {
-    private readonly Random _rand = new();
-    private readonly string _name = null!;
-    private readonly Weapon _equippedWpn = null!;
-    private int HitPoints { get; set; }
+    protected readonly Random _rand = new();
+    protected Weapon EquippedWpn;
+    protected int HitPoints { get; set; }
+    protected int MaxHitPoints { get; set; }
+    protected int Level { get; set; }
     
-    public bool CanBlock => !_equippedWpn.IsTwoHanded;
+    public readonly string Name;
     public bool IsDead => HitPoints <= 0;
 
-    protected Character()
-    {
-        
-    }
-
-    public Character(Weapon equippedWpn)
-    {
-        var faker = new Faker();
-        
-        _name = faker.Name.FirstName();
-        _equippedWpn = equippedWpn;
-        HitPoints = _rand.Next(10, 50);
-    }
     public Character(string name, Weapon equippedWpn)
     {
-        _name = name;
-        _equippedWpn = equippedWpn;
-        HitPoints = _rand.Next(10, 50);
+        Name = name;
+        EquippedWpn = equippedWpn;
+        int hp = _rand.Next(10, 50);
+        HitPoints = hp;
+        MaxHitPoints = hp;
+        Level = 1;
     }
 
     public int Attack()
     {
-        int damage = _rand.Next(_equippedWpn.MinDamage, _equippedWpn.MaxDamage + 1) + _equippedWpn.MagicBonus;
-        Console.WriteLine($"{_name} swings their {_equippedWpn.Name} and " +
+        int damage = _rand.Next(EquippedWpn.MinDamage, EquippedWpn.MaxDamage + 1) + EquippedWpn.MagicBonus + Level;
+        Console.WriteLine($"{Name} swings their {EquippedWpn.Name} and " +
                           $"deals {damage} damage!");
         return damage;
     }
 
     public void Info()
     {
-        Console.WriteLine($"{_name} has {HitPoints} hit points and is wielding a {_equippedWpn.Name} " +
-                          $"at +{_equippedWpn.MagicBonus} to hit");
+        Console.WriteLine($"{Name} has {HitPoints} hit points and is wielding a {EquippedWpn.Name} " +
+                          $"at +{EquippedWpn.MagicBonus} to hit");
     }
 
     public void TakeDamage(int damage)
     {
         HitPoints -= damage;
-        Console.WriteLine($"{_name} has {HitPoints} HP remaining.");
+        Console.WriteLine($"{Name} has {HitPoints} HP remaining.");
     }
+
+    public void LevelUp()
+    {
+        Level++;
+        MaxHitPoints += _rand.Next(1, 6);
+        Console.WriteLine($"You gained a level! You are now Level {Level}! You now have {MaxHitPoints} HP!");
+        Heal();
+    }
+
+    private void Heal()
+    {
+        HitPoints += MaxHitPoints / 2;
+    }
+
 }

@@ -34,9 +34,10 @@ public class Dungeon
     private static IEnumerable<Character> GetMonsters(int numberOfMonsters)
     {
         var monsters = new List<Character>();
+        var faker = new Faker();
         for (var i = 0; i < numberOfMonsters; i++)
         {
-            monsters.Add(new Character($"Monster {i}", WeaponsHelper.GetWeapon()));
+            monsters.Add(new Character(faker.Name.FirstName(), WeaponsHelper.GetWeapon()));
         }
         
         return monsters;
@@ -65,5 +66,11 @@ public class Dungeon
     {
         var rand = new Random();
         return _rooms[rand.Next(_rooms.Length)];
+    }
+
+    public static Weapon DropLoot(int level)
+    {
+        Weapon baseWeapon = WeaponsHelper.GetWeapon();
+        return new Weapon(baseWeapon, level);
     }
 }
