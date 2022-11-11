@@ -21,7 +21,7 @@ public class Hero : Character
 
     public new int Attack()
     {
-        int damage = _rand.Next(EquippedWpn.MinDamage, EquippedWpn.MaxDamage + 1) + EquippedWpn.MagicBonus + Level;
+        int damage = Rand.Next(EquippedWpn.MinDamage, EquippedWpn.MaxDamage + 1) + EquippedWpn.MagicBonus + Level;
         damage = IsBlocking ? damage / 2 : damage;
         Console.WriteLine($"{Name} swings their {EquippedWpn.Name} and " +
                           $"deals {damage} damage!");
